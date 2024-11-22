@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,6 +87,19 @@ fun Start(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Box (
+                modifier = Modifier
+                    .size(300.dp)
+            ) {
+                Image(
+                    contentScale = ContentScale.FillBounds,
+                    painter = painterResource(
+                        id = R.drawable.hangnn
+                    ),
+                    contentDescription = "Game icon",
+                    modifier = Modifier.matchParentSize()
+                )
+            }
             // Título principal
             Text(
                 text = "Welcome!",
@@ -102,17 +119,17 @@ fun Start(navController: NavController) {
                     .clickable { navController.navigate(Routes.MenuScreen.route) }
                     .background(
                         color = Color.LightGray, // Fondo gris claro para neutralidad
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(6.dp)
                     )
-                    .shadow(1.dp, shape = RoundedCornerShape(8.dp)) // Sombra en el botón
+                    .shadow(1.dp, shape = RoundedCornerShape(6.dp)) // Sombra en el botón
                     .padding(horizontal = 24.dp, vertical = 12.dp), // Espaciado interno
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "¡Start!",
+                    text = "Start!",
                     color = Color.Black, // Texto en negro para contraste
                     fontWeight = FontWeight.Bold, // Más énfasis
-                    fontSize = 18.sp
+                    fontSize = 24.sp
                 )
             }
         }
