@@ -95,6 +95,7 @@ fun Start(navController: NavController) {
 
             Spacer(modifier = Modifier.height(20.dp))
 
+
             // Botón con diseño neutral
             Box(
                 modifier = Modifier
