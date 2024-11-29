@@ -86,14 +86,13 @@ fun FakeProgressBar(navController: NavController) {
             .padding(16.dp)
     ) {
         LinearProgressIndicator(
-            progress = progressStatus,
+            progress = { progressStatus },
+            modifier = Modifier
+                .height(8.dp)
+                .fillMaxWidth(),
             color = Color.Magenta,
             trackColor = Color.LightGray,
             strokeCap = StrokeCap.Butt,
-            modifier = Modifier
-                .height(8.dp)
-                .fillMaxWidth()
-
         )
     }
 }
