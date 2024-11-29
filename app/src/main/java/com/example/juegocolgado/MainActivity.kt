@@ -18,12 +18,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -31,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -103,9 +103,10 @@ fun Start(navController: NavController) {
             // Título principal
             Text(
                 text = "Welcome!",
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.displayMedium,
                 color = Color.Black,
+                fontWeight = FontWeight.Bold,
+
                 modifier = Modifier
                     .padding(8.dp) // Espaciado para que la sombra no quede muy pegada
             )
@@ -117,21 +118,27 @@ fun Start(navController: NavController) {
             Box(
                 modifier = Modifier
                     .clickable { navController.navigate(Routes.MenuScreen.route) }
+                    .clip(RoundedCornerShape(12.dp))
                     .background(
-                        color = Color.LightGray, // Fondo gris claro para neutralidad
-                        shape = RoundedCornerShape(6.dp)
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0xFFDD6AE5),
+                                Color(0xFFAA00AA)
+
+                            )
+                        )
                     )
-                    .shadow(1.dp, shape = RoundedCornerShape(6.dp)) // Sombra en el botón
-                    .padding(horizontal = 24.dp, vertical = 12.dp), // Espaciado interno
+                    .padding(horizontal = 32.dp, vertical = 12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Start!",
-                    color = Color.Black, // Texto en negro para contraste
-                    fontWeight = FontWeight.Bold, // Más énfasis
-                    fontSize = 24.sp
+                    text = "Start",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
                 )
             }
+
         }
     }
 }
