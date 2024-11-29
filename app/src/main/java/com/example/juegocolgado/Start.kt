@@ -71,6 +71,7 @@ fun FakeProgressBar(navController: NavController) {
             progressStatus += 0.03f
         }
         delay(600)
+        progressStatus -= 0.1f
         while (progressStatus < 1f) {
             delay(50)
             progressStatus += 0.01f
