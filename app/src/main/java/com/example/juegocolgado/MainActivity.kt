@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 composable(Routes.StartScreen.route) { Start(navigationController) }
                 composable(Routes.MenuScreen.route) { Menu(navigationController) }
-                composable(Routes.GameScreen.route) { Game(navigationController) }
+                composable(Routes.GameScreen.route) { Game("calamar",navigationController) } //añadir alguna palabra de lista del objeto palabras como variable
                 composable(Routes.EndScreen.route) { End(navigationController) }
             }
         }
