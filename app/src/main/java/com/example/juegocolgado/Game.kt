@@ -85,7 +85,7 @@ fun Game(targetWord: String, navController: NavController) {
                                 displayWord = targetWord.map { letterInWord ->
                                     if (letterInWord in guessedLetters) letterInWord else '_'
                                 }.joinToString(" ")
-                                textFieldValue = displayWord
+                                textFieldValue = displayWord.uppercase()
                             }
                         },
                         enabled = !isLetterGuessed, // Deshabilitar el botón si la letra ya fue adivinada

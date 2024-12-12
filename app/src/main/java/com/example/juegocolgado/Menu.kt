@@ -2,7 +2,6 @@ package com.example.juegocolgado
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -124,6 +125,7 @@ fun Menu(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropDownDifficulty(modifier: Modifier = Modifier) {
     var selectedText: String by remember { mutableStateOf("") }
@@ -131,7 +133,8 @@ fun DropDownDifficulty(modifier: Modifier = Modifier) {
     val difficulties = listOf("Easy", "Medium", "Hard")
 
     Column(
-        modifier = modifier.padding(20.dp)
+        modifier = modifier
+            .padding(12.dp) // Compactar el padding
     ) {
         // Campo de texto
         OutlinedTextField(
@@ -142,27 +145,50 @@ fun DropDownDifficulty(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .clickable { expanded = true }
                 .fillMaxWidth()
+                .background(Color(0xFFF2F2F2), RoundedCornerShape(8.dp)), // Fondo suave
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
+            placeholder = {
+                Text("Select Difficulty", color = Color(0xFFAA00AA)) // Placeholder bonito
+            }
         )
 
-        // DropdownMenu
+        // DropdownMenu con gradiente magenta a blanco
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Gray)
-                .border(1.dp, Color.Black, RoundedCornerShape(4.dp)) // Border
+                .width(330.dp)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(8.dp) // Bordes suaves
+                )
         ) {
             difficulties.forEach { difficulty ->
                 DropdownMenuItem(
-                    text = { Text(text = difficulty) },
+                    text = {
+                        Text(
+                            text = difficulty,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = Color.White, // Texto blanco para contraste
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                    },
                     onClick = {
                         selectedText = difficulty
                         expanded = false
                     },
                     modifier = Modifier
-                        .background(Color.Magenta) // Fondo del ítem
-                        .padding(8.dp)
+                        .padding(vertical = 4.dp, horizontal = 8.dp) // Compactar padding interno
+                        .clip(RoundedCornerShape(6.dp)) // Esquinas suaves
+                        .background(
+                            brush = Brush.horizontalGradient(
+                                colors = listOf(
+                                    Color(0xFFDD6AE5),
+                                    Color(0xFFAA00AA)
+                                )
+                            )
+                        )
                 )
             }
         }
