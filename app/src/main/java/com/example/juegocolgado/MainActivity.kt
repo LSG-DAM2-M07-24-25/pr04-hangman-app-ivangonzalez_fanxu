@@ -12,11 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.juegocolgado.ui.theme.JuegoColgadoTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,40 +30,35 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            JuegoColgadoTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
             val navigationController = rememberNavController()
             NavHost(
                 navController = navigationController,
-                startDestination = Routes.StartScreen.route
+                startDestination = Routes.StartScreen
             ) {
-                composable(Routes.StartScreen.route) { Start(navigationController) }
-                composable(Routes.MenuScreen.route) { Menu(navigationController) }
-                composable(Routes.GameScreen.route) { Game("calamar",navigationController) } //añadir alguna palabra de lista del objeto palabras como variable
-                composable(Routes.EndScreen.route) { End(navigationController) }
+                composable(Routes.StartScreen) { Start(navigationController) }
+                composable(Routes.MenuScreen) { Menu(navigationController) }
+                composable(
+                    route = Routes.GameScreen,
+                    arguments = listOf(navArgument("difficulty") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    // Extraemos el argumento 'difficulty' de backStackEntry
+                    val difficulty = backStackEntry.arguments?.getString("difficulty") ?: "Facil"
+                    Game(targetWord = "", navController = navigationController, difficulty = difficulty)
+                }
+                composable(
+                    route = "${Routes.EndScreen}/{result}/{word}",
+                    arguments = listOf(
+                        navArgument("result") { type = NavType.StringType },
+                        navArgument("word") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val result = backStackEntry.arguments?.getString("result") ?: "lose"
+                    val word = backStackEntry.arguments?.getString("word") ?: ""
+                    End(navController = navigationController, result = result, word = word)
+                }
             }
+
+
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun GreetingPreview() {
-    JuegoColgadoTheme {
-        Greeting("Android")
     }
 }

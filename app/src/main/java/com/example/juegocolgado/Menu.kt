@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +39,9 @@ import androidx.navigation.NavController
 
 @Composable
 fun Menu(navController: NavController) {
+    // Estado para la dificultad seleccionada
+    var selectedDifficulty by remember { mutableStateOf("Facil") } // Default "Facil"
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,38 +54,34 @@ fun Menu(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box (
+            Box(
                 modifier = Modifier
                     .size(300.dp)
             ) {
                 Image(
                     contentScale = ContentScale.FillBounds,
-                    painter = painterResource(
-                        id = R.drawable.hangnn
-                    ),
+                    painter = painterResource(id = R.drawable.hangnn),
                     contentDescription = "Game icon",
                     modifier = Modifier.matchParentSize()
                 )
             }
-            Box {
-                DropDownDifficulty(
-                    modifier = Modifier
-                        .padding(12.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color.Gray)
-                )
-            }
+            // Pasar el estado de dificultad seleccionada al dropdown
+            DropDownDifficulty(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.Gray),
+                selectedDifficulty = selectedDifficulty,
+                onDifficultySelected = { selectedDifficulty = it } // Actualiza el estado
+            )
+            // Botón Play, pasa la dificultad seleccionada al navegar
             Box(
                 modifier = Modifier
-                    .clickable { navController.navigate(Routes.GameScreen.route) }
+                    .clickable { navController.navigate(Routes.getGameScreenRoute(selectedDifficulty)) }
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color(0xFFDD6AE5),
-                                Color(0xFFAA00AA)
-
-                            )
+                            colors = listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA))
                         )
                     )
                     .padding(horizontal = 72.dp, vertical = 10.dp),
@@ -93,21 +94,15 @@ fun Menu(navController: NavController) {
                     fontWeight = FontWeight.Bold,
                 )
             }
-            Spacer(
-                modifier = Modifier
-                    .padding(10.dp)
-            )
+            Spacer(modifier = Modifier.padding(10.dp))
+            // Botón de Ayuda
             Box(
                 modifier = Modifier
-                    .clickable {  }
+                    .clickable { /* Implementar ayuda si es necesario */ }
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         brush = Brush.horizontalGradient(
-                            colors = listOf(
-                                Color(0xFFDD6AE5),
-                                Color(0xFFAA00AA)
-
-                            )
+                            colors = listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA))
                         )
                     )
                     .padding(horizontal = 72.dp, vertical = 10.dp),
@@ -120,39 +115,37 @@ fun Menu(navController: NavController) {
                     fontWeight = FontWeight.Bold,
                 )
             }
-
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropDownDifficulty(modifier: Modifier = Modifier) {
-    var selectedText: String by remember { mutableStateOf("") }
-    var expanded: Boolean by remember { mutableStateOf(false) }
-    val difficulties = listOf("Easy", "Medium", "Hard")
+fun DropDownDifficulty(
+    modifier: Modifier = Modifier,
+    selectedDifficulty: String,
+    onDifficultySelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val difficulties = listOf("Facil", "Medio", "Dificil")
 
-    Column(
-        modifier = modifier
-            .padding(12.dp) // Compactar el padding
-    ) {
-        // Campo de texto
+    Column(modifier = modifier.padding(12.dp)) {
+
         OutlinedTextField(
-            value = selectedText,
-            onValueChange = { selectedText = it },
+            value = selectedDifficulty,
+            onValueChange = {},
             enabled = false,
             readOnly = true,
             modifier = Modifier
                 .clickable { expanded = true }
                 .fillMaxWidth()
-                .background(Color(0xFFF2F2F2), RoundedCornerShape(8.dp)), // Fondo suave
+                .background(Color(0xFFF2F2F2), RoundedCornerShape(8.dp)),
             textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
             placeholder = {
-                Text("Select Difficulty", color = Color(0xFFAA00AA)) // Placeholder bonito
+                Text("Select Difficulty", color = Color(0xFFAA00AA))
             }
         )
 
-        // DropdownMenu con gradiente magenta a blanco
+        // DropdownMenu para seleccionar la dificultad
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -160,7 +153,7 @@ fun DropDownDifficulty(modifier: Modifier = Modifier) {
                 .width(330.dp)
                 .background(
                     color = Color.White,
-                    shape = RoundedCornerShape(8.dp) // Bordes suaves
+                    shape = RoundedCornerShape(8.dp)
                 )
         ) {
             difficulties.forEach { difficulty ->
@@ -169,24 +162,21 @@ fun DropDownDifficulty(modifier: Modifier = Modifier) {
                         Text(
                             text = difficulty,
                             style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color.White, // Texto blanco para contraste
+                                color = Color.Black,
                                 fontWeight = FontWeight.Bold
                             )
                         )
                     },
                     onClick = {
-                        selectedText = difficulty
+                        onDifficultySelected(difficulty) // Actualiza la dificultad seleccionada
                         expanded = false
                     },
                     modifier = Modifier
-                        .padding(vertical = 4.dp, horizontal = 8.dp) // Compactar padding interno
-                        .clip(RoundedCornerShape(6.dp)) // Esquinas suaves
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
+                        .clip(RoundedCornerShape(6.dp))
                         .background(
                             brush = Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFFDD6AE5),
-                                    Color(0xFFAA00AA)
-                                )
+                                colors = listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA))
                             )
                         )
                 )
@@ -194,3 +184,4 @@ fun DropDownDifficulty(modifier: Modifier = Modifier) {
         }
     }
 }
+

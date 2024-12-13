@@ -76,7 +76,7 @@ fun FakeProgressBar(navController: NavController) {
             delay(50)
             progressStatus += 0.01f
         }
-        navController.navigate(Routes.MenuScreen.route)
+        navController.navigate(Routes.MenuScreen)
     }
 
     // Progress bar UI

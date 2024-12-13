@@ -1,8 +1,13 @@
 package com.example.juegocolgado
 
-sealed class Routes(val route: String) {
-    object StartScreen : Routes("startscreen")
-    object MenuScreen : Routes("menuscreen")
-    object GameScreen : Routes("gamescreen")
-    object EndScreen : Routes("endscreen")
+object Routes {
+    val StartScreen = "startScreen"
+    val MenuScreen = "menuScreen"
+    val GameScreen = "gameScreen/{difficulty}"
+    val EndScreen = "endScreen/{result}/{word}"
+
+    fun getGameScreenRoute(difficulty: String): String {
+        return "gameScreen/$difficulty"
+    }
 }
+
