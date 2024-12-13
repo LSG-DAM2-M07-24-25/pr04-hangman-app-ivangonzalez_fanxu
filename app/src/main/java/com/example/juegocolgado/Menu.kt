@@ -13,15 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,12 +35,25 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
 fun Menu(navController: NavController) {
     // Estado para la dificultad seleccionada
     var selectedDifficulty by remember { mutableStateOf("Facil") } // Default "Facil"
+
+    // Estado del Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showSnackbar by remember { mutableStateOf(false) }
+
+    // Mostrar el mensaje del Snackbar si showSnackbar es verdadero
+    if (showSnackbar) {
+        LaunchedEffect(snackbarHostState) {
+            snackbarHostState.showSnackbar("Reglas del juego: \n1. Adivina la palabra antes de que se complete el dibujo del ahorcado. \n2. Cada intento incorrecto suma un error. \n3. Si llegas a 10 errores, pierdes el juego. \n4. Si adivinas todas las letras antes de 10 errores, ganas.")
+            showSnackbar = false
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -54,6 +67,26 @@ fun Menu(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "JOMMY",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontSize = 50.sp,
+                    fontWeight = FontWeight.Bold,
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA)) // Gradiente similar al de los botones
+                    )
+                ),
+            )
+            Text(
+                text = "Juego de Ahorcado",
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA)) // Gradiente similar al de los botones
+                    )
+                ),
+                modifier = Modifier.padding(bottom = 20.dp) // Espacio debajo del título
+            )
             Box(
                 modifier = Modifier
                     .size(300.dp)
@@ -70,7 +103,7 @@ fun Menu(navController: NavController) {
                 modifier = Modifier
                     .padding(12.dp)
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.Gray),
+                    .background(Color(0xFFDD6AE5)),
                 selectedDifficulty = selectedDifficulty,
                 onDifficultySelected = { selectedDifficulty = it } // Actualiza el estado
             )
@@ -98,7 +131,7 @@ fun Menu(navController: NavController) {
             // Botón de Ayuda
             Box(
                 modifier = Modifier
-                    .clickable { /* Implementar ayuda si es necesario */ }
+                    .clickable { showSnackbar = true } // Mostrar el Snackbar con las reglas
                     .clip(RoundedCornerShape(12.dp))
                     .background(
                         brush = Brush.horizontalGradient(
@@ -116,9 +149,13 @@ fun Menu(navController: NavController) {
                 )
             }
         }
+
+        // SnackbarHost
+        SnackbarHost(hostState = snackbarHostState)
     }
 }
 
+// Componente DropDown para seleccionar dificultad
 @Composable
 fun DropDownDifficulty(
     modifier: Modifier = Modifier,
@@ -139,7 +176,11 @@ fun DropDownDifficulty(
                 .clickable { expanded = true }
                 .fillMaxWidth()
                 .background(Color(0xFFF2F2F2), RoundedCornerShape(8.dp)),
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = Color.Black,
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold
+            ),
             placeholder = {
                 Text("Select Difficulty", color = Color(0xFFAA00AA))
             }
@@ -184,4 +225,3 @@ fun DropDownDifficulty(
         }
     }
 }
-

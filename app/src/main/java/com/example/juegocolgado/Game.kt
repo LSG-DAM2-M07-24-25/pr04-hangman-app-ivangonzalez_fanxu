@@ -1,4 +1,3 @@
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -6,19 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.juegocolgado.Palabra
-import com.example.juegocolgado.R // Import correcto del R
+import com.example.juegocolgado.R
 import com.example.juegocolgado.Routes
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,16 +36,14 @@ fun Game(targetWord: String, navController: NavController, difficulty: String) {
 
     var guessedLetters by remember { mutableStateOf(setOf<Char>()) }
     var errors by remember { mutableStateOf(0) }
-    var gameEnded by remember { mutableStateOf(false) } // Estado para controlar si el juego ha terminado
+    var gameEnded by remember { mutableStateOf(false) }
 
-    // Construcción de la palabra oculta
     var displayWord by remember {
         mutableStateOf(
             palabra.map { letter -> if (letter in guessedLetters) letter else '_' }.joinToString(" ")
         )
     }
 
-    // Estado para el texto editable con guiones bajos
     var textFieldValue by remember { mutableStateOf(displayWord) }
 
     val images = listOf(
@@ -61,7 +60,6 @@ fun Game(targetWord: String, navController: NavController, difficulty: String) {
         R.drawable.hangman_11
     )
 
-    // Comprobamos si pierde o gana, pero solo si el juego no ha terminado aún
     if (!gameEnded) {
         if (errors == images.size - 1) {
             gameEnded = true
@@ -75,18 +73,23 @@ fun Game(targetWord: String, navController: NavController, difficulty: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Brush.verticalGradient(listOf(Color.White, Color.LightGray)))
     ) {
         Column(
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(top = 50.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Juego Colgado",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    brush = Brush.horizontalGradient(
+                        colors = listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA)) // Gradiente similar al de los botones
+                    )
+                ),
                 color = Color.Black
             )
             Image(
@@ -94,7 +97,7 @@ fun Game(targetWord: String, navController: NavController, difficulty: String) {
                 contentDescription = "Estado del juego",
                 modifier = Modifier.size(200.dp)
             )
-            TextField(
+            OutlinedTextField(
                 value = textFieldValue,
                 onValueChange = {},
                 readOnly = true,
@@ -134,18 +137,22 @@ fun Game(targetWord: String, navController: NavController, difficulty: String) {
                         enabled = !isLetterGuessed,
                         modifier = Modifier
                             .padding(4.dp)
-                            .size(48.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = Color.White,
-                            contentColor = Color.Black
-                        ),
+                            .size(48.dp)
+                            .clip(RoundedCornerShape(12.dp)),
                         border = BorderStroke(1.dp, Color.Black),
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
+                        colors = ButtonDefaults.buttonColors(containerColor = if (!isLetterGuessed) Color(0xFFAA00AA) else Color.Transparent) // Morado si no ha sido seleccionado
                     ) {
-                        Text(letter.toString())
+                        Text(
+                            text = letter.toString(),
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                            color = if (!isLetterGuessed) Color.White else Color.Gray // Color del texto blanco si no ha sido seleccionado
+                        )
                     }
                 }
             }
+
+            // Botón de reiniciar juego con gradiente
             Button(
                 onClick = {
                     guessedLetters = setOf()
@@ -158,35 +165,41 @@ fun Game(targetWord: String, navController: NavController, difficulty: String) {
                     }
                     displayWord = nuevaPalabra.map { '_' }.joinToString(" ")
                     textFieldValue = displayWord.uppercase()
-                    gameEnded = false // Reinicia el estado de "fin de juego" al reiniciar el juego
+                    gameEnded = false
                 },
-                modifier = Modifier.padding(top = 16.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
-                ),
-                border = BorderStroke(1.dp, Color.Black),
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Brush.horizontalGradient(listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA)))),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Reiniciar Juego")
+                Text(
+                    text = "Reiniciar Juego",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = Color.White
+                )
             }
 
-            // Botón de salir de la partida
+            // Botón de salir de la partida con gradiente
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     // Navegar al menú
                     navController.navigate(Routes.MenuScreen)
                 },
-                modifier = Modifier.padding(top = 16.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black
-                ),
-                border = BorderStroke(1.dp, Color.Black),
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Brush.horizontalGradient(listOf(Color(0xFFDD6AE5), Color(0xFFAA00AA)))),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 shape = MaterialTheme.shapes.medium
             ) {
-                Text("Salir de la Partida")
+                Text(
+                    text = "Salir",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                    color = Color.White
+                )
             }
         }
     }
